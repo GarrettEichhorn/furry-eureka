@@ -87,7 +87,7 @@ cols = ['Budget',
         'ESOV',
         'SOM Gain / Loss (simulated)',
         'SOM',
-        'Next Year Sales (Simulated)',
+        'Next Year Sales (simulated)',
         'Next Year Incremental Sales',
         'ROMI'
         ]
@@ -234,6 +234,10 @@ app.layout = html.Div(style={'backgroundColor': colors['background'], 'textAlign
 
     dcc.Graph(id='linechart'),
 
+    dcc.Dropdown(['ESOV', 'ROMI'], 'ESOV', id='axis_dropdown'),
+
+    html.H2(children=''),
+
     html.Div(id = 'div2', children=[dash_table.DataTable(id='table-editing-simple-output')])
 
 ])
@@ -248,15 +252,17 @@ app.layout = html.Div(style={'backgroundColor': colors['background'], 'textAlign
     Input("industry_constant_inp", "value"),
     Input("market_growth_rate_inp", "value"),
     Input("market_growth_cap_inp", "value"),
+    Input("axis_dropdown", "value")
+
 )
 
-def updated_dashtable(total_category_spend_inp, client_category_spend_inp, market_share_inp, client_sales_inp, industry_constant_inp, market_growth_rate_inp, market_growth_cap_inp):
+def updated_dashtable(total_category_spend_inp, client_category_spend_inp, market_share_inp, client_sales_inp, industry_constant_inp, market_growth_rate_inp, market_growth_cap_inp, axis_dropdown):
     
     df = agg_dataframe(25, budget_seed, total_category_spend_inp, client_category_spend_inp, market_share_inp, client_sales_inp, industry_constant_inp, market_growth_cap_inp)
 
     df.columns = cols
 
-    fig = px.line(df, x='ESOV', y='SOM', title='sov / som')
+    fig = px.line(df, x='Budget', y=axis_dropdown, title='sov / som')
 
     return dash_table.DataTable(
         columns= ([{'id': p, 'name': p} for p in df.columns]),
@@ -264,7 +270,5 @@ def updated_dashtable(total_category_spend_inp, client_category_spend_inp, marke
         export_format="csv"
         ), fig
         
-
-
 if __name__ == '__main__':
     app.run_server(debug=True)

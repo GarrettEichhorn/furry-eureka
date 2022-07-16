@@ -99,144 +99,112 @@ df.columns = cols
 
 app = Dash(__name__)
 
-colors = {
-    'background': '#FFFFFF',
-    'text': '#111111'
-}
+# The app layout
+app.layout = html.Div(className='app-body', children=[
 
-app.layout = html.Div(style={'backgroundColor': colors['background'], 'textAlign': 'center'}, children=[
+    # About the app + logos
+    html.Div(className="row", children=[
+        html.Div(className='twelve columns', children=[
+            html.Div(style={'float': 'left'}, children=[
+                    html.H1('Share of Voice & Share of Market'),
+                    html.H4('Exploring relationships between variables!')
+                ]
+            ),
 
-    html.H2(children='Sov vs SoM Modeling', style={
-        'textAlign': 'center',
-        'color': colors['text']
-    }),
+            html.Div(style={'float': 'right'}, children=[
+                html.A(
+                    html.Img(
+                        src=app.get_asset_url("cm.png"),
+                        style={'float': 'right', 'height': '60px', 'margin-top': '20px'}
+                    ),
+                    href="https://www.collemcvoy.com/"),
+            ]),
+        ]),
+    ]),
 
-    html.H4(children='Total Category Spend',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
+    # Control panel
+    html.Div(className="row", id='control-panel', children=[
+          
+        html.Div(className="four columns pretty_container", children=[
 
-    dcc.Input(
-        id='total_category_spend_inp',
-        type='number',
-        value=total_category_spend, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
+            html.Label('Total Category Spend'),
+            dcc.Input(id='total_category_spend_inp',
+                        type='number',
+                        value=total_category_spend, 
+                        debounce=True,
+            )
+        ]),
 
-    html.H4(children='Client Category Spend',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
-        
-    dcc.Input(
-        id='client_category_spend_inp',
-        type='number',
-        value=client_category_spend, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
+        html.Div(className="four columns pretty_container", children=[
 
-    html.H4(children='Total Market Size',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
-        
-    dcc.Input(
-        id='market_share_inp',
-        type='number',
-        value=total_market_size, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
+            html.Label('Client Category Spend'),
+            dcc.Input(id='client_category_spend_inp',
+                        type='number',
+                        value=client_category_spend, 
+                        debounce=True,
+            )
+        ]),
 
-    html.H4(children='Client Sales',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
-        
-    dcc.Input(
-        id='client_sales_inp',
-        type='number',
-        value=client_sales, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
+        html.Div(className="four columns pretty_container", children=[
 
-    html.H4(children='Industry Constant',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
-        
-    dcc.Input(
-        id='industry_constant_inp',
-        type='number',
-        value=industry_constant, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
+            html.Label('Total Market Size'),
+            dcc.Input(id='market_share_inp',
+                        type='number',
+                        value=total_market_size, 
+                        debounce=True,
+            )
+        ]),
 
-    html.H4(children='Market Growth Rate',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
-        
-    dcc.Input(
-        id='market_growth_rate_inp',
-        type='number',
-        value=market_growth_rate, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
+        html.Div(className="four columns pretty_container", children=[
+
+            html.Label('Client Sales'),
+            dcc.Input(id='client_sales_inp',
+                        type='number',
+                        value=client_sales, 
+                        debounce=True,
+            )
+        ]),
+
+        html.Div(className="four columns pretty_container", children=[
+
+            html.Label('Industry Constant'),
+            dcc.Input(   id='industry_constant_inp',
+                        type='number',
+                        value=industry_constant, 
+                        debounce=True,
+            )
+        ]),
+
+        html.Div(className="four columns pretty_container", children=[
+
+            html.Label('Market Growth Rate'),
+            dcc.Input(id='market_growth_rate_inp',
+                        type='number',
+                        value=market_growth_rate, 
+                        debounce=True,
+            )
+        ]),
+
+         html.Div(className="four columns pretty_container", children=[
+
+            html.Label('Market Growth Rate'),
+            dcc.Input(id='market_growth_cap_inp',
+                        type='number',
+                        value=market_growth_cap, 
+                        debounce=True,
+            )
+        ]),
+
+
+    ]),
     
-    html.H4(children='Market CAP',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }),
-        
-    dcc.Input(
-        id='market_growth_cap_inp',
-        type='number',
-        value=market_growth_cap, 
-        debounce=True, 
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
-
+    html.Hr(),
+    html.Div(id = "chart-title", children=[html.H2(id="dash-chart-title-output")], style={'textAlign': 'center'}),
     html.H2(children=''),
-
-    dcc.Graph(id='linechart'),
-
     dcc.Dropdown(['ESOV', 'ROMI'], 'ESOV', id='axis_dropdown'),
-
+    dcc.Graph(id='linechart'),
     html.H2(children=''),
+    html.Hr(),
 
     html.Div(id = 'div2', children=[dash_table.DataTable(id='table-editing-simple-output')])
 
@@ -245,6 +213,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background'], 'textAlign
 @app.callback(
     Output("div2", "children"),
     Output("linechart", "figure"),
+    Output("chart-title", "children"),
     Input("total_category_spend_inp", "value"),
     Input("client_category_spend_inp", "value"),
     Input("market_share_inp", "value"),
@@ -253,7 +222,6 @@ app.layout = html.Div(style={'backgroundColor': colors['background'], 'textAlign
     Input("market_growth_rate_inp", "value"),
     Input("market_growth_cap_inp", "value"),
     Input("axis_dropdown", "value")
-
 )
 
 def updated_dashtable(total_category_spend_inp, client_category_spend_inp, market_share_inp, client_sales_inp, industry_constant_inp, market_growth_rate_inp, market_growth_cap_inp, axis_dropdown):
@@ -262,13 +230,14 @@ def updated_dashtable(total_category_spend_inp, client_category_spend_inp, marke
 
     df.columns = cols
 
-    fig = px.line(df, x='Budget', y=axis_dropdown, title='sov / som')
+    fig = px.line(df, x='Budget', y=axis_dropdown, markers=True)
+    title = f"Budget vs. {axis_dropdown}"
 
     return dash_table.DataTable(
         columns= ([{'id': p, 'name': p} for p in df.columns]),
         data = df.to_dict('records'),
         export_format="csv"
-        ), fig
+        ), fig, title
         
 if __name__ == '__main__':
     app.run_server(debug=True)
